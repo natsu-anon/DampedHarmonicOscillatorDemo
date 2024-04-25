@@ -1,7 +1,7 @@
 [gd_scene load_steps=11 format=3 uid="uid://bnv4pwhu8flfb"]
 
 [ext_resource type="Script" path="res://src/player/Player.gd" id="1_2irgg"]
-[ext_resource type="Script" path="res://src/player/RunState.gd" id="2_3qnyr"]
+[ext_resource type="Script" path="res://src/player/movement/RunState.gd" id="2_3qnyr"]
 [ext_resource type="Script" path="res://src/player/movement/PlayerMovement.gd" id="2_gkmdn"]
 [ext_resource type="Script" path="res://src/player/movement/AirborneState.gd" id="4_osgov"]
 [ext_resource type="Script" path="res://src/player/movement/CrouchState.gd" id="5_7qemr"]

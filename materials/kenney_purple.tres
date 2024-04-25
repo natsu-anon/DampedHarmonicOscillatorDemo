@@ -1,0 +1,12 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://daeyit2grdgp1"]
+
+[ext_resource type="Shader" uid="uid://bqx6hlmxg7pen" path="res://materials/triplanar_shader.tres" id="1_vfo6k"]
+[ext_resource type="Texture2D" uid="uid://ww4q4tx3oebg" path="res://textures/KenneyPrototype/Purple/texture_04.png" id="2_ah0mf"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_vfo6k")
+shader_parameter/triplanar_scale = Vector3(0.1, 0.1, 10)
+shader_parameter/triplanar_offset = null
+shader_parameter/triplanar_sharpness = 1.0
+shader_parameter/TextureParameterTriplanar = ExtResource("2_ah0mf")

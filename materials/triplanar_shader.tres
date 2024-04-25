@@ -1,0 +1,74 @@
+[gd_resource type="VisualShader" load_steps=4 format=3 uid="uid://bqx6hlmxg7pen"]
+
+[sub_resource type="VisualShaderNodeTextureParameterTriplanar" id="VisualShaderNodeTextureParameterTriplanar_xvyem"]
+parameter_name = "TextureParameterTriplanar"
+texture_type = 1
+
+[sub_resource type="VisualShaderNodeFloatConstant" id="VisualShaderNodeFloatConstant_vcxp6"]
+
+[sub_resource type="VisualShaderNodeFloatConstant" id="VisualShaderNodeFloatConstant_hg7ma"]
+constant = 1.0
+
+[resource]
+code = "shader_type spatial;
+render_mode blend_mix, depth_draw_opaque, cull_back, diffuse_lambert, specular_schlick_ggx;
+
+uniform sampler2D TextureParameterTriplanar : source_color;
+
+
+// TextureParameterTriplanar
+	vec4 triplanar_texture(sampler2D p_sampler, vec3 p_weights, vec3 p_triplanar_pos) {
+		vec4 samp = vec4(0.0);
+		samp += texture(p_sampler, p_triplanar_pos.xy) * p_weights.z;
+		samp += texture(p_sampler, p_triplanar_pos.xz) * p_weights.y;
+		samp += texture(p_sampler, p_triplanar_pos.zy * vec2(-1.0, 1.0)) * p_weights.x;
+		return samp;
+	}
+
+	uniform vec3 triplanar_scale = vec3(1.0, 1.0, 1.0);
+	uniform vec3 triplanar_offset;
+	uniform float triplanar_sharpness = 0.5;
+
+	varying vec3 triplanar_power_normal;
+	varying vec3 triplanar_pos;
+
+void vertex() {
+// TextureParameterTriplanar
+	{
+		triplanar_power_normal = pow(abs(NORMAL), vec3(triplanar_sharpness));
+		triplanar_power_normal /= dot(triplanar_power_normal, vec3(1.0));
+		triplanar_pos = VERTEX * triplanar_scale + triplanar_offset;
+		triplanar_pos *= vec3(1.0, -1.0, 1.0);
+	}
+}
+
+void fragment() {
+// TextureParameterTriplanar:2
+	vec4 n_out2p0 = triplanar_texture(TextureParameterTriplanar, triplanar_power_normal, triplanar_pos);
+
+
+// FloatConstant:3
+	float n_out3p0 = 0.000000;
+
+
+// FloatConstant:4
+	float n_out4p0 = 1.000000;
+
+
+// Output:0
+	ALBEDO = vec3(n_out2p0.xyz);
+	METALLIC = n_out3p0;
+	ROUGHNESS = n_out4p0;
+	SPECULAR = n_out3p0;
+	EMISSION = vec3(n_out3p0);
+
+
+}
+"
+nodes/fragment/2/node = SubResource("VisualShaderNodeTextureParameterTriplanar_xvyem")
+nodes/fragment/2/position = Vector2(-20, -100)
+nodes/fragment/3/node = SubResource("VisualShaderNodeFloatConstant_vcxp6")
+nodes/fragment/3/position = Vector2(100, 300)
+nodes/fragment/4/node = SubResource("VisualShaderNodeFloatConstant_hg7ma")
+nodes/fragment/4/position = Vector2(100, 220)
+nodes/fragment/connections = PackedInt32Array(2, 0, 0, 0, 4, 0, 0, 3, 3, 0, 0, 5, 3, 0, 0, 2, 3, 0, 0, 4)

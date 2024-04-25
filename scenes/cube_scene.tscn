@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://bgfmrv50c660e"]
+
+[ext_resource type="Script" path="res://src/HorizontalSpring.gd" id="1_fkmdu"]
+[ext_resource type="Material" uid="uid://b8utvamg8xfa3" path="res://materials/kenney_green.tres" id="2_sm8f4"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_rao2d"]
+material = ExtResource("2_sm8f4")
+
+[node name="Node3D" type="Node3D"]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.693402, 0.720551, 0, -0.720551, 0.693402, 5, 5, 5)
+
+[node name="HorizontalSpring" type="Node3D" parent="."]
+script = ExtResource("1_fkmdu")
+spring_coefficient = 120.0
+damping_coefficient = 7.0
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="HorizontalSpring"]
+mesh = SubResource("BoxMesh_rao2d")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.733576, 0.505594, 0.454138, 0, -0.668235, 0.74395, 0.679608, -0.545744, -0.490201, 0, 5, 0)

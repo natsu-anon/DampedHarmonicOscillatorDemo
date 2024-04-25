@@ -1,0 +1,7 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://bfukw55xa6lv6"]
+
+[ext_resource type="Shader" uid="uid://ed34cutthyr3" path="res://materials/gun_shader.tres" id="1_ibn1l"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_ibn1l")

@@ -1,0 +1,58 @@
+[gd_resource type="VisualShader" load_steps=5 format=3 uid="uid://b5jwunvhdknyd"]
+
+[ext_resource type="Texture2D" uid="uid://yjbjo3iefv8k" path="res://textures/pow.png" id="1_uy74q"]
+
+[sub_resource type="VisualShaderNodeTexture" id="VisualShaderNodeTexture_7ldqg"]
+expanded_output_ports = [0]
+texture = ExtResource("1_uy74q")
+texture_type = 1
+
+[sub_resource type="VisualShaderNodeColorConstant" id="VisualShaderNodeColorConstant_d6s41"]
+constant = Color(0.945098, 1, 0, 1)
+
+[sub_resource type="VisualShaderNodeVectorOp" id="VisualShaderNodeVectorOp_37oa6"]
+default_input_values = [0, Vector3(0, 0, 0), 1, Vector3(5, 5, 5)]
+operator = 2
+
+[resource]
+code = "shader_type spatial;
+render_mode blend_mix, depth_draw_opaque, cull_back, diffuse_toon, specular_toon, unshaded, shadows_disabled, ambient_light_disabled;
+
+uniform sampler2D tex_frg_2 : source_color;
+
+
+
+void fragment() {
+// ColorConstant:4
+	vec4 n_out4p0 = vec4(0.945098, 1.000000, 0.000000, 1.000000);
+
+
+// VectorOp:8
+	vec3 n_in8p1 = vec3(5.00000, 5.00000, 5.00000);
+	vec3 n_out8p0 = vec3(n_out4p0.xyz) * n_in8p1;
+
+
+// Texture2D:2
+	vec4 n_out2p0 = texture(tex_frg_2, UV);
+	float n_out2p1 = n_out2p0.r;
+
+
+// Output:0
+	ALBEDO = n_out8p0;
+	ALPHA = n_out2p1;
+
+
+}
+"
+modes/diffuse = 3
+modes/specular = 1
+flags/unshaded = true
+flags/shadows_disabled = true
+flags/ambient_light_disabled = true
+nodes/fragment/2/node = SubResource("VisualShaderNodeTexture_7ldqg")
+nodes/fragment/2/position = Vector2(-360, 200)
+nodes/fragment/4/node = SubResource("VisualShaderNodeColorConstant_d6s41")
+nodes/fragment/4/position = Vector2(-60, 100)
+nodes/fragment/8/node = SubResource("VisualShaderNodeVectorOp_37oa6")
+nodes/fragment/8/position = Vector2(100, 60)
+nodes/fragment/connections = PackedInt32Array(2, 1, 0, 1, 4, 0, 8, 0, 8, 0, 0, 0)

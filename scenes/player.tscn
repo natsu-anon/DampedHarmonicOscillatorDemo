@@ -1,0 +1,89 @@
+[gd_scene load_steps=11 format=3 uid="uid://bnv4pwhu8flfb"]
+
+[ext_resource type="Script" path="res://src/player/Player.gd" id="1_2irgg"]
+[ext_resource type="Script" path="res://src/player/RunState.gd" id="2_3qnyr"]
+[ext_resource type="Script" path="res://src/player/movement/PlayerMovement.gd" id="2_gkmdn"]
+[ext_resource type="Script" path="res://src/player/movement/AirborneState.gd" id="4_osgov"]
+[ext_resource type="Script" path="res://src/player/movement/CrouchState.gd" id="5_7qemr"]
+[ext_resource type="Environment" uid="uid://dfkoadfkohx7y" path="res://camera_environment.tres" id="6_3yjqo"]
+[ext_resource type="Script" path="res://src/player/PlayerCamera.gd" id="6_n3syt"]
+[ext_resource type="PackedScene" uid="uid://c2uqyskhldxo0" path="res://scenes/gun.tscn" id="7_mia1j"]
+
+[sub_resource type="Curve" id="Curve_nm5aw"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.7, 0), 0.0, 0.0, 1, 0, Vector2(1, 1), 10.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_nmw3r"]
+
+[node name="Player" type="CharacterBody3D"]
+slide_on_ceiling = false
+script = ExtResource("1_2irgg")
+
+[node name="PlayerMovement" type="Node" parent="."]
+script = ExtResource("2_gkmdn")
+initial_state = NodePath("Run")
+
+[node name="Run" type="Node" parent="PlayerMovement"]
+script = ExtResource("2_3qnyr")
+lurch_scale = 0.01
+friction = 75.0
+
+[node name="Airborne" type="Node" parent="PlayerMovement"]
+script = ExtResource("4_osgov")
+landing_scale = 1.0
+acceleration = 30.0
+friction = 1.0
+max_speed = 15.0
+
+[node name="Crouch" type="Node" parent="PlayerMovement"]
+script = ExtResource("5_7qemr")
+slide_duration = 2.0
+friction_scale = SubResource("Curve_nm5aw")
+acceleration = 120.0
+friction = 80.0
+max_speed = 5.0
+
+[node name="Movement Collision" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_nmw3r")
+
+[node name="Player Camera" type="Camera3D" parent="." node_paths=PackedStringArray("first_person_camera")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+cull_mask = 1048573
+environment = ExtResource("6_3yjqo")
+fov = 90.0
+script = ExtResource("6_n3syt")
+first_person_camera = NodePath("SubViewportContainer/SubViewport/Camera3D")
+input_scale = 0.001
+external_velocity_scale = 2.5
+position_spring_coefficient = 400.0
+recoil_spring_coefficient = 30.0
+recoil_damping_coefficient = 12.0
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="Player Camera"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="Player Camera/SubViewportContainer"]
+transparent_bg = true
+handle_input_locally = false
+canvas_cull_mask = 4294967294
+size = Vector2i(1920, 1080)
+render_target_update_mode = 4
+
+[node name="Camera3D" type="Camera3D" parent="Player Camera/SubViewportContainer/SubViewport"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+cull_mask = 2
+environment = ExtResource("6_3yjqo")
+
+[node name="gun" parent="Player Camera/SubViewportContainer/SubViewport/Camera3D" instance=ExtResource("7_mia1j")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0.607, -0.623, -0.32566)
+
+[connection signal="add_camera_velocity" from="PlayerMovement" to="Player Camera" method="add_position_velocity"]
+[connection signal="camera_recoil" from="Player Camera/SubViewportContainer/SubViewport/Camera3D/gun" to="Player Camera" method="add_recoil_velocity"]
